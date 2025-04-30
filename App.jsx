@@ -1,47 +1,62 @@
-import React from 'react';
-import {ScrollView, StyleSheet,  Text, View, Image, ImageBackground, TextInput, Pressable} from 'react-native';
-import {Element3, Receipt21, Clock, Message, SearchNormal} from 'iconsax-react-native';
-import { fontType, colors } from './src/theme';
+import React, { useState } from 'react';
+import {ScrollView, StyleSheet,  Text, View, Image, ImageBackground, TextInput, Pressable, TouchableOpacity, FlatList} from 'react-native';
+import {Element3, Receipt21, Clock, Message, SearchNormal, Notification} from 'iconsax-react-native';import { fontType, colors } from './src/theme';
+import { CategoryList, BlogList } from './src/data';
+import { ListHorizontal, ItemSmall } from './src/components';
+
+const ItemCategory = ({item, onPress, color}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={category.item}>
+        <Text style={{...category.title, color}}>{item.categoryName}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const FlatListCategory = () => {
+  const [selected, setSelected] = useState(1);
+  const renderItem = ({item}) => {
+    const color = item.id === selected ? colors.orange() : colors.grey();
+    return (
+      <ItemCategory
+        item={item}
+        onPress={() => setSelected(item.id)}
+        color={color}
+      />
+    );
+  };
+  return (
+    <FlatList
+      data={CategoryList}
+      keyExtractor={item => item.id}
+      renderItem={item => renderItem({...item})}
+      ItemSeparatorComponent={() => <View style={{width: 10}} />}
+      contentContainerStyle={{paddingHorizontal: 24}}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+};
 
 export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>FitTracker</Text>
-        <Element3 color={colors.black()} variant="Linear" size={24} />
+        <Notification color={colors.black()} variant="Linear" size={24} />
       </View>
-<View style={searchBar.container}>
-        <TextInput
-            style={searchBar.input}
-            placeholder="Search"
-          />
-          <Pressable style={searchBar.button}>
-            <SearchNormal size={20} color={colors.white()} />
-          </Pressable>
+      <View style={searchBar.container}>
+           <TextInput
+                    style={searchBar.input}
+                    placeholder="Search"
+                />
+           <Pressable style={searchBar.button}>
+                    <SearchNormal size={20} color={colors.white()} />
+         </Pressable>
       </View>
       <View style={styles.listCategory}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{...category.item, marginLeft: 24}}>
-            <Text style={{...category.title, color: colors.orange()}}>
-              Popular
-            </Text>
-          </View>
-          <View style={category.item}>
-            <Text style={category.title}>Latest</Text>
-          </View>
-          <View style={category.item}>
-            <Text style={category.title}>Latihan</Text>
-          </View>
-          <View style={category.item}>
-            <Text style={category.title}>Kalori dan Nutrisi</Text>
-          </View>
-          <View style={category.item}>
-            <Text style={category.title}>Teknologi Kesehatan</Text>
-          </View>
-          <View style={{...category.item, marginRight: 24}}>
-            <Text style={category.title}>Gaya Hidup</Text>
-          </View>
-        </ScrollView>
+        <FlatListCategory />
       </View>
       <ListBlog />
     </View>
@@ -66,7 +81,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: fontType['Pjs-ExtraBold'],
-    color: colors.black(),
+    color: colors.orange(),
   },
   listCategory: {
     paddingVertical: 10,
@@ -75,7 +90,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: 10,
   },
+  listCard: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    gap: 15,
+  },
 });
+
 const category = StyleSheet.create({
   item: {
     paddingHorizontal: 14,
@@ -83,13 +104,11 @@ const category = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     backgroundColor: colors.grey(0.08),
-    marginHorizontal:5
   },
   title: {
     fontFamily: fontType['Pjs-SemiBold'],
     fontSize: 14,
     lineHeight: 18,
-    color: colors.grey(),
   },
 });
 
@@ -119,374 +138,22 @@ const searchBar = StyleSheet.create({
 });
 
 const ListBlog = () => {
+  const horizontalData = BlogList.slice(0, 5);
+  const verticalData = BlogList.slice(5);
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.listBlog}>
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          contentContainerStyle={{gap: 15}}>
-          <View style={{...itemHorizontal.cardItem, marginLeft: 24}}>
-            <ImageBackground
-              style={itemHorizontal.cardImage}
-              resizeMode="cover"
-              imageStyle={{borderRadius: 15}}
-              source={{
-                uri: 'https://photo-fhad-fithub.s3.ap-southeast-1.amazonaws.com/Lunge_Jumps_freepik_d18f74cdc2.jpg',
-              }}>
-              <View style={itemHorizontal.cardContent}>
-                <View style={itemHorizontal.cardInfo}>
-                  <Text style={itemHorizontal.cardTitle}>
-                  Latihan HIIT untuk Pemula
-                  </Text>
-                  <Text style={itemHorizontal.cardText}>Apr 10, 2025</Text>
-                </View>
-                <View>
-                  <View style={itemHorizontal.cardIcon}>
-                    <Receipt21 color={colors.white()} variant="Linear" size={20} />
-                  </View>
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
-          <View style={itemHorizontal.cardItem}>
-            <ImageBackground
-              style={itemHorizontal.cardImage}
-              resizeMode="cover"
-              imageStyle={{borderRadius: 15}}
-              source={{
-                uri: 'https://rsum.bandaacehkota.go.id/wp-content/uploads/2025/02/lari.webp',
-              }}>
-              <View style={itemHorizontal.cardContent}>
-                <View style={itemHorizontal.cardInfo}>
-                  <Text style={itemHorizontal.cardTitle}>
-                  Cara Meningkatkan Stamina Saat Berlari
-                  </Text>
-                  <Text style={itemHorizontal.cardText}>Apr 20, 2025</Text>
-                </View>
-                <View>
-                  <View style={itemHorizontal.cardIcon}>
-                    <Receipt21 color={colors.white()} variant="Linear" size={20} />
-                  </View>
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
-          <View style={itemHorizontal.cardItem}>
-            <ImageBackground
-              style={itemHorizontal.cardImage}
-              resizeMode="cover"
-              imageStyle={{borderRadius: 15}}
-              source={{
-                uri: 'https://thumb.viva.id/vivabanyuwangi/1265x711/2024/11/22/673f767be75de-ilustrasi-smarthwatch_banyuwangi.jpg',
-              }}>
-              <View style={itemHorizontal.cardContent}>
-                <View style={itemHorizontal.cardInfo}>
-                  <Text style={itemHorizontal.cardTitle}>
-                  Teknologi Terbaru untuk Memantau Aktivitas Fisik
-                  </Text>
-                  <Text style={itemHorizontal.cardText}>Apr 21, 2025</Text>
-                </View>
-                <View>
-                  <View style={itemHorizontal.cardIcon}>
-                    <Receipt21 color={colors.white()} variant="Linear" size={20} />
-                  </View>
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
-        </ScrollView>
-        <View style={itemVertical.listCard}>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://www.indonesiabaik.id/public/uploads/post/4175/4175-1608134348-200128_IEI_Hitung%20Kalori%20untuk%20Kebutuhan%20Tubuh_AN_Moment.jpg',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Latihan</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Panduan Lengkap Menghitung Kalori untuk Pemula
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://thegadgetflow.com/wp-content/uploads/2022/07/Altis-AI-Interactive-Personal-Home-Fitness-Trainer-01-1-1024x576.jpeg',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Teknologi Kesehatan</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Teknologi Kebugaran: Gadget yang Membantu Anda Tetap Fit
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://suarajatimpost.com/uploads/images/202412/image_870x_675d2a0eae538.webp',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Gaya Hidup</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Resep Sehat: Makanan Rendah Kalori yang Lezat dan Mudah Dibuat
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://hips.hearstapps.com/hmg-prod/images/deadlift-gym-67ed265ac1a6f.jpg?crop=0.66640625xw:1xh;center,top&resize=640:*',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Latihan</Text>
-                  <Text style={itemVertical.cardTitle}>Cara Efektif Menggabungkan Latihan Kardio dan Angkat Beban</Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://images.unsplash.com/photo-1602192509154-0b900ee1f851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Latihan</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Manfaat Yoga untuk Keseimbangan Tubuh dan Pikiran
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Gaya Hidup</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Tips Memulai Gaya Hidup Sehat Tanpa Stres
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
-          <View style={itemVertical.cardItem}>
-            <Image
-              style={itemVertical.cardImage}
-              source={{
-                uri: 'https://canyon.eu/blog/wp-content/uploads/2023/09/image-20.png',
-              }}
-            />
-            <View style={itemVertical.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '70%'}}>
-                  <Text style={itemVertical.cardCategory}>Teknologi Kesehatan</Text>
-                  <Text style={itemVertical.cardTitle}>
-                  Mengoptimalkan Latihan dengan Fitness Tracker: Apa yang Perlu Anda Ketahui
-                  </Text>
-                </View>
-                <Receipt21
-                  color={colors.grey(0.6)}
-                  variant="Linear"
-                  size={20}
-                />
-              </View>
-              <View style={itemVertical.cardInfo}>
-                <Clock
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>Jul 25, 2023</Text>
-                <Message
-                  size={10}
-                  variant="Linear"
-                  color={colors.grey(0.6)}
-                />
-                <Text style={itemVertical.cardText}>89</Text>
-              </View>
-            </View>
-          </View>
+        <ListHorizontal data={horizontalData} />
+        <View style={styles.listCard}>
+          {verticalData.map((item, index) => (
+            <ItemSmall item={item} key={index} />
+          ))}
         </View>
       </View>
     </ScrollView>
   );
 };
+
 
 const itemVertical = StyleSheet.create({
   listCard: {
