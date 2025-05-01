@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Discover, Bookmark, Profile, BlogDetail, AddBlogForm} from '../screens';
+import {Home, Discover, Bookmark, Profile, BlogDetail, AddBlogForm, Search} from '../screens';
 import {Home2, LocationDiscover, Receipt21, ProfileCircle} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
 
@@ -106,7 +106,14 @@ const Router = () => {
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />
-
+      <Stack.Screen
+        name="SearchPage"
+        component={Search}
+        options={{
+          headerShown: false, 
+          presentation: 'transparentModal',
+        }}
+      />
     </Stack.Navigator>
   );
 };
