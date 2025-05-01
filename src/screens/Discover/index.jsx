@@ -5,11 +5,11 @@ import {ItemSmall} from '../../components';
 import {SearchNormal1} from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
 const data = [
-  {id: 1, label: 'Latihan'},
-  {id: 2, label: 'kalori'},
-  {id: 3, label: 'teknologi'},
-  {id: 4, label: 'sehat'},
-  {id: 5, label: 'wow'},
+  {id: 1, label: 'latihan'},
+  {id: 2, label: 'teknologi'},
+  {id: 3, label: 'gaya'},
+  {id: 4, label: 'hidup'},
+  {id: 5, label: 'sehat'},
 ];
 const ItemRecent = ({item}) => {
   return (
@@ -112,7 +112,7 @@ const recent = StyleSheet.create({
   text: {
     fontSize: 14,
     fontFamily: fontType['Pjs-Bold'],
-    color: colors.orange(),
+    color: colors.black(),
     paddingVertical: 5,
     paddingHorizontal: 24,
   },

@@ -143,4 +143,3 @@ export const CategoryList = [
       content: `Revolusi kebugaran di rumah semakin berkembang dengan banyaknya pilihan alat fitness yang tersedia. Mulai dari alat fitness portabel hingga kelas online, ada banyak cara untuk tetap aktif di rumah tanpa perlu pergi ke gym. Artikel ini akan membahas bagaimana Anda bisa bertransformasi dengan latihan fitness di rumah.`
     }
   ];
-  
