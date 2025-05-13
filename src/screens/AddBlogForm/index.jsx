@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Modal} from 'react-native';
 import {ArrowLeft} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../theme';
+import axios from 'axios';
 
 const AddBlogForm = () => {
+  const [loading, setLoading] = useState(false);
 const dataCategory = [
     {id: 1, name: 'Latihan'},
     {id: 2, name: 'Kalori dan Nutrisi'},
@@ -23,6 +25,31 @@ const dataCategory = [
       ...blogData,
       [key]: value,
     });
+  };
+   const handleUpload = async () => {
+    setLoading(true);
+    try {
+      // gunakan metode POST untuk menambahkan blog baru
+      const response = await axios.post('https://682321a6b342dce80050d20f.mockapi.io/api/blog', {
+        title: blogData.title,
+        category: blogData.category,
+        image,
+        content: blogData.content,
+        totalComments: blogData.totalComments,
+        totalLikes: blogData.totalLikes,
+        createdAt: new Date(),
+      });
+      // jika status response 201 (Created) "Sukses"
+      if (response.status == 201) {
+        // kembali ke layar sebelumnya (Profile)
+        navigation.goBack();
+      }
+    } catch (e) {
+      // tampilkan error
+      Alert.alert('Gagal Mengunggah Blog', `Status: ${e.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
@@ -111,10 +138,15 @@ const dataCategory = [
         </View>
       </ScrollView>
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
           <Text style={styles.buttonLabel}>Upload</Text>
         </TouchableOpacity>
       </View>
+      <Modal visible={loading} animationType='none' transparent>
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors.orange()} />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -167,6 +199,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fontType['Pjs-SemiBold'],
     color: colors.white(),
+  },
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: colors.black(0.4),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 const textInput = StyleSheet.create({

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Discover, Bookmark, Profile, BlogDetail, AddBlogForm, Search} from '../screens';
+import {Home, Discover, Bookmark, Profile, EditBlogForm, BlogDetail, AddBlogForm, Search} from '../screens';
 import {Home2, LocationDiscover, Receipt21, ProfileCircle} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
 
@@ -70,6 +70,21 @@ function MainApp() {
           headerShown: false,
         }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({focused, color}) => (
+            <ProfileCircle
+              color={color}
+              variant={focused ? 'Bold' : 'Linear'}
+              size={24}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -93,7 +108,7 @@ const Router = () => {
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />
-
+      
       <Stack.Screen
         name="AddBlog"
         component={AddBlogForm}
@@ -103,6 +118,18 @@ const Router = () => {
           animationTypeForReplace: 'pop',
           gestureEnabled: true,
           gestureDirection : 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="EditBlog"
+        component={EditBlogForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />
