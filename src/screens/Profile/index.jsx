@@ -1,54 +1,57 @@
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl} from 'react-native';
-import {Edit, Setting2} from 'iconsax-react-native';
-import React, { useState, useCallback} from 'react';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { Edit, Setting2 } from 'iconsax-react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import FastImage from '@d11/react-native-fast-image';
-import {ProfileData} from '../../data';
-import {ItemSmall} from '../../components';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {fontType, colors} from '../../theme';
-import {formatNumber} from '../../utils/formatNumber';
-import axios from 'axios';
+import { ProfileData } from '../../data';
+import { ItemSmall } from '../../components';
+import { useNavigation } from '@react-navigation/native';
+import { fontType, colors } from '../../theme';
+import { collection, getFirestore, onSnapshot } from '@react-native-firebase/firestore';
+import { formatNumber } from '../../utils/formatNumber';
 
 const Profile = () => {
   const navigation = useNavigation();
-  
-  // status untuk menandakan apakah terjadi loading/tidak
   const [loading, setLoading] = useState(true);
-  // state blod data untuk menyimpan list (array) dari blog
   const [blogData, setBlogData] = useState([]);
-  // status untuk menyimpan status refreshing
   const [refreshing, setRefreshing] = useState(false);
-  
-  const getDataBlog = async () => {
-    try {
-      // ambil data dari API dengan metode GET
-      const response = await axios.get(
-        'https://682321a6b342dce80050d20f.mockapi.io/api/blog',
-      );
-      // atur state blogData sesuai dengan data yang
-      // di dapatkan dari API
-      setBlogData(response.data);
-      // atur loading menjadi false
-      setLoading(false)
-    } catch (error) {
-        console.error(error);
-    }
-  };
+  useEffect(() => {
+    const db = getFirestore();
+    const blogRef = collection(db, 'blog');
+
+    const subscriber = onSnapshot(blogRef, (snapshot) => {
+      const blogs = [];
+      snapshot.forEach((doc) => {
+        blogs.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      setBlogData(blogs);
+      setLoading(false);
+    });
+    return () => subscriber();
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataBlog()
+      const db = getFirestore();
+      const blogRef = collection(db, 'blog');
+      onSnapshot(blogRef, (snapshot) => {
+        const blogs = [];
+        snapshot.forEach((doc) => {
+          blogs.push({
+            ...doc.data(),
+            id: doc.id,
+          });
+        });
+        setBlogData(blogs);
+        setLoading(false);
+      });
+
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataBlog();
-    }, [])
-  );
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -62,37 +65,38 @@ const Profile = () => {
           paddingHorizontal: 24,
           gap: 10,
           paddingVertical: 20,
-        }} refreshControl={
+        }}
+        refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        <View style={{gap: 15, alignItems: 'center'}}>
+        <View style={{ gap: 15, alignItems: 'center' }}>
           <FastImage
             style={profile.pic}
             source={{
               uri: ProfileData.profilePict,
-              headers: {Authorization: 'someAuthToken'},
+              headers: { Authorization: 'someAuthToken' },
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}
           />
-          <View style={{gap: 5, alignItems: 'center'}}>
+          <View style={{ gap: 5, alignItems: 'center' }}>
             <Text style={profile.name}>{ProfileData.name}</Text>
             <Text style={profile.info}>
               Member since {ProfileData.createdAt}
             </Text>
           </View>
-          <View style={{flexDirection: 'row', gap: 20}}>
-            <View style={{alignItems: 'center', gap: 5}}>
+          <View style={{ flexDirection: 'row', gap: 20 }}>
+            <View style={{ alignItems: 'center', gap: 5 }}>
               <Text style={profile.sum}>{ProfileData.blogPosted}</Text>
               <Text style={profile.tag}>Posted</Text>
             </View>
-            <View style={{alignItems: 'center', gap: 5}}>
+            <View style={{ alignItems: 'center', gap: 5 }}>
               <Text style={profile.sum}>
                 {formatNumber(ProfileData.following)}
               </Text>
               <Text style={profile.tag}>Following</Text>
             </View>
-            <View style={{alignItems: 'center', gap: 5}}>
+            <View style={{ alignItems: 'center', gap: 5 }}>
               <Text style={profile.sum}>
                 {formatNumber(ProfileData.follower)}
               </Text>
@@ -103,8 +107,7 @@ const Profile = () => {
             <Text style={profile.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
-        <View style={{paddingVertical: 10, gap: 10}}>
-          {/* Tampilkan Blog Data */}
+        <View style={{ paddingVertical: 10, gap: 10 }}>
           {loading ? (
             <ActivityIndicator size={'large'} color={colors.orange()} />
           ) : (
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
   },
 });
 const profile = StyleSheet.create({
-  pic: {width: 100, height: 100, borderRadius: 15},
+  pic: { width: 100, height: 100, borderRadius: 15 },
   name: {
     color: colors.black(),
     fontSize: 20,

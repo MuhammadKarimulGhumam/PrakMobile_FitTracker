@@ -23,12 +23,12 @@ export const CategoryList = [
 
   export const ProfileData = {
   profilePict:
-    'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    '',
   name: 'Admin',
   createdAt: '22 Apr, 2025',
-  blogPosted: 1,
-  following: 1,
-  follower: 1,
+  blogPosted: 0,
+  following: 0,
+  follower: 0,
 };
 
   export const BlogList = [
