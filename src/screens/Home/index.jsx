@@ -191,7 +191,7 @@ const itemVertical = StyleSheet.create({
         gap: 15,
     },
     cardItem: {
-        backgroundColor: colors.blue(0.03),
+        backgroundColor: colors.orange(0.03),
         flexDirection: 'row',
         borderRadius: 10,
     },
